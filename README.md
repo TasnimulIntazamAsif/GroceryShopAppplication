@@ -1,23 +1,151 @@
-# python_projects_grocery_webapp
-In this python project, we will build a grocery store management application. It will be 3 tier application,
-1. Front end: UI is written in HTML/CSS/Javascript/Bootstrap
-2. Backend: Python and Flask
-3. Database: mysql
+## Grocery Shop Application
 
-![](homepage.JPG)
+This project is a simple **Grocery Store Management** web application built with:
 
-### Installation Instructions
+- **Frontend**: HTML, CSS, JavaScript, Bootstrap (in `ui/`)
+- **Backend**: Python + Flask (in `backend/`)
+- **Database**: MySQL (see `backend/sql_connection.py`)
 
-Download mysql for windows: https://dev.mysql.com/downloads/installer/
+The app lets you manage products (with units of measure) and create/view customer orders.
 
-`pip install mysql-connector-python`
+---
 
-### Exercise 
+## Project Structure
 
-The grocery management system that we built is functional but after we give it to users for use, we got following feedback. The exercise for you to address this feedback and implement these features in the application,
-1. **Products Module**: In products page that lists current products, add an edit button next to delete button that allows to edit current product
-2. **Products Module**: Implement a new form that allows you to add new UOM in the application. For example you want to add **Cubic Meter** as a new UOM as the grocery store decided to start selling **wood** as well. This requies changing backend (python server) and front end (UI) both.
-3. **Orders Module**: When you place an order it doesn't have any validation. For example one can enter an order with empty customer name. You need to add validation for customer name and invalid item name or not specifying a quantity etc. This is only front end UI work.
-4. **Orders Module**: In new order page there is a bug. When you manually change total price of an item it doesn't change the grand total. You need to fix this issue.
-5. **Orders Module**: In the grid where orders are listed, add a view button in the last column. On clicking this button it should show you order details where individual items in that order are listed along with their price/quantity etc.
+- **backend/**
+  - `server.py`: Flask application exposing REST endpoints for products, units of measure, and orders.
+  - `product_dao.py`: Product CRUD operations.
+  - `orders_dao.py`: Order and order‑details persistence and querying.
+  - `uom_dao.py`: Units of measure (UOM) queries.
+  - `sql_connection.py`: MySQL connection helper (update credentials here).
+- **ui/**
+  - `index.html`: Dashboard / landing page.
+  - `manage-product.html`: Product listing and management UI.
+  - `order.html`: Create and view orders UI.
+  - `css/`, `js/`, `images/`: Static assets (Bootstrap, jQuery, custom scripts, styles, and images).
 
+---
+
+## Prerequisites
+
+- **Python 3.8+**
+- **MySQL Server**
+- **pip** (Python package manager)
+
+Python packages (install via `pip`):
+
+```bash
+pip install flask mysql-connector-python
+```
+
+---
+
+## Database Setup
+
+1. **Create a database** (default name used in code is `grocery`):
+
+```sql
+CREATE DATABASE grocery;
+```
+
+2. **Create required tables** (simplified example – adjust to match your own schema):
+
+```sql
+USE grocery;
+
+CREATE TABLE uom (
+  uom_id INT AUTO_INCREMENT PRIMARY KEY,
+  uom_name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE products (
+  product_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  uom_id INT NOT NULL,
+  price_per_unit DECIMAL(10,2) NOT NULL,
+  FOREIGN KEY (uom_id) REFERENCES uom(uom_id)
+);
+
+CREATE TABLE orders (
+  order_id INT AUTO_INCREMENT PRIMARY KEY,
+  customer_name VARCHAR(100) NOT NULL,
+  total DECIMAL(10,2) NOT NULL,
+  datetime DATETIME NOT NULL
+);
+
+CREATE TABLE order_details (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  order_id INT NOT NULL,
+  product_id INT NOT NULL,
+  quantity DECIMAL(10,2) NOT NULL,
+  total_price DECIMAL(10,2) NOT NULL,
+  FOREIGN KEY (order_id) REFERENCES orders(order_id),
+  FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+```
+
+3. **Configure DB credentials** in `backend/sql_connection.py`:
+
+```python
+__cnx = mysql.connector.connect(
+    user='root',
+    password='YOUR_PASSWORD',
+    database='grocery'
+)
+```
+
+---
+
+## Running the Backend (Flask API)
+
+1. Open a terminal and go to the `backend` folder:
+
+```bash
+cd backend
+```
+
+2. Run the Flask server:
+
+```bash
+python server.py
+```
+
+3. By default the API runs at:
+
+- `http://localhost:5000`
+
+Key endpoints (used by the UI JavaScript):
+
+- `GET /getUOM` – list units of measure.
+- `GET /getProducts` – list products.
+- `POST /insertProduct` – create a new product.
+- `POST /deleteProduct` – delete a product.
+- `GET /getAllOrders` – list all orders (with details).
+- `POST /insertOrder` – create a new order.
+
+---
+
+## Running the Frontend
+
+1. Open the `ui` folder in your file explorer.
+2. Open one of these files in a browser (Chrome/Edge/Firefox, etc.):
+   - `index.html`
+   - `manage-product.html`
+   - `order.html`
+3. Make sure the Flask server is running on `http://localhost:5000` so that AJAX calls from the UI succeed.
+
+If you prefer, you can serve `ui/` via a simple static server instead of opening HTML files directly (for example `python -m http.server` inside `ui/`), but it is not strictly required.
+
+---
+
+## Notes and Customization
+
+- **Change port**: Edit `app.run(port=5000)` in `backend/server.py` if you want a different port.
+- **Change DB connection**: Update `backend/sql_connection.py` for your MySQL host/user/password/database.
+- **Security**: This is a learning/demo app and does not include authentication or authorization; do not expose it directly to the internet without hardening.
+
+---
+
+## License
+
+See `LICENSE` file for licensing details.
