@@ -19,6 +19,13 @@ The app lets you manage products (with units of measure) and create/view custome
   - `uom_dao.py`: Units of measure (UOM) queries.
   - `sql_connection.py`: MySQL connection helper (update credentials here).
 - **ui/**
+![bg](https://github.com/user-attachments/assets/970a420b-a95d-4f6f-b168-21ff3a09bcce)
+<img width="1914" height="946" alt="Screenshot 2025-12-04 111453" src="https://github.com/user-attachments/assets/aea2cc82-e1dd-4660-a00f-61a967550006" />
+<img width="1919" height="947" alt="Screenshot 2025-12-04 111544" src="https://github.com/user-attachments/assets/9d0b9bdf-15b9-4dae-88da-8247a05e1388" />
+<img width="1915" height="937" alt="Screenshot 2025-12-04 111600" src="https://github.com/user-attachments/assets/7dbff594-15e4-4164-bee0-05c62e1de888" />
+<img width="1914" height="938" alt="Screenshot 2025-12-04 111624" src="https://github.com/user-attachments/assets/edb11370-a467-4154-b614-c2ed413e537d" />
+
+- 
   - `index.html`: Dashboard / landing page.
   - `manage-product.html`: Product listing and management UI.
   - `order.html`: Create and view orders UI.
